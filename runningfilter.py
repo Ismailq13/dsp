@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
 
-st.title("Running Mean Filter + Plot Interaktif")
+st.title("Running Mean Filter")
 
 uploaded_file = st.file_uploader("Upload file CSV", type=["csv"])
 
