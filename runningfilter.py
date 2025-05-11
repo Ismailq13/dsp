@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 import pandas as pd
 import plotly.graph_objects as go
+from io import BytesIO
 
 st.title("Running Mean Filter")
 
@@ -23,17 +24,15 @@ if uploaded_file is not None:
     signal = df[y_col].values
     n = len(signal)
 
-    # Running mean filter
     filtsig = np.zeros(n)
     for i in range(k, n-k):
         filtsig[i] = np.mean(signal[i-k:i+k+1])
 
     windowsize = 1000*(2*k+1) / srate
 
-    # Tambah ke DataFrame
     df['Filtered_Signal'] = filtsig
 
-    # Plot interaktif pakai Plotly
+    # Plot interaktif
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=time, y=signal, mode='lines', name='Original Signal'))
     fig.add_trace(go.Scatter(x=time, y=filtsig, mode='lines', name='Filtered Signal'))
@@ -42,3 +41,17 @@ if uploaded_file is not None:
                       yaxis_title=y_col)
 
     st.plotly_chart(fig)
+
+    # Download CSV hasil
+    csv_buffer = BytesIO()
+    df.to_csv(csv_buffer, index=False)
+    csv_buffer.seek(0)
+
+    st.download_button(
+        label="💾 Download hasil CSV",
+        data=csv_buffer,
+        file_name="filtered_signal.csv",
+        mime="text/csv"
+    )
+else:
+    st.info("Silakan upload file CSV berisi sinyal untuk mulai.")
